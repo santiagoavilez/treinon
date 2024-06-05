@@ -9,11 +9,13 @@
     "clean": "rm -rf .turbo node_modules",
     "lint": "eslint .",
     "format": "prettier --check . --ignore-path ../../.gitignore",
-    "push": "drizzle-kit push:pg",
+    "push": "pnpm with-env drizzle-kit push",
+    "studio": "pnpm with-env drizzle-kit studio",
+    "with-env": "dotenv -e ../../.env --",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@vercel/postgres": "^0.5.1",
+    "@vercel/postgres": "^0.8.0",
     "drizzle-orm": "^0.29.1"
   },
   "devDependencies": {

@@ -7,8 +7,8 @@ import { desc, eq, schema } from "@acme/db";
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 
 export const postRouter = createTRPCRouter({
-  all: publicProcedure.query(({ ctx }) => {
-    return ctx.db.query.post.findMany({
+  all: publicProcedure.query(async ({ ctx }) => {
+    return await ctx.db.query.post.findMany({
       with: { author: true },
       orderBy: desc(schema.post.id),
       limit: 10,
@@ -32,6 +32,7 @@ export const postRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
+      console.log("Creating post", input);
       function getNameFromUser() {
         const meta = ctx.user.user_metadata;
         if (typeof meta.name === "string") return meta.name;
@@ -59,14 +60,25 @@ export const postRouter = createTRPCRouter({
           return newProfile!.id;
         });
 
-      return ctx.db.insert(schema.post).values({
+      const post = ctx.db.insert(schema.post).values({
         id: nanoid(),
         authorId,
         title: input.title,
         content: input.content,
       });
+      return post;
     }),
-
+  createPost: protectedProcedure
+    .input(
+      z.object({
+        title: z.string().nullish(),
+        content: z.string().nullish(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      console.log("Creating post", input);
+      return input;
+    }),
   delete: protectedProcedure
     .input(z.string())
     .mutation(async ({ ctx, input }) => {

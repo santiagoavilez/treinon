@@ -6,6 +6,8 @@ import Image from "next/image";
 import type { RouterOutputs } from "@acme/api";
 
 import { api } from "~/trpc/react";
+import React from "react";
+import { Loader2 } from "lucide-react";
 
 export function CreatePostForm() {
   const utils = api.useUtils();
@@ -13,31 +15,33 @@ export function CreatePostForm() {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
 
-  const { mutateAsync: createPost, error } = api.post.create.useMutation({
-    async onSuccess() {
-      setTitle("");
-      setContent("");
-      await utils.post.all.invalidate();
-    },
-  });
+  const { error, mutate, isPending } = api.post.create.useMutation();
+  console.log("error", error);
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    console.log("title", title);
+    console.log("content", content);
+    if (!title || !content) return;
+    mutate({
+      title: title,
+      content: content,
+    }, {
+      onSuccess: () => {
+        setTitle("");
+        setContent("");
+        utils.post.all.invalidate();
+
+      },
+      onError: (e) => {
+        console.error(e);
+      },
+    });
+  }
 
   return (
     <form
       className="flex w-full max-w-2xl flex-col"
-      onSubmit={async (e) => {
-        e.preventDefault();
-        try {
-          await createPost({
-            title,
-            content,
-          });
-          setTitle("");
-          setContent("");
-          await utils.post.all.invalidate();
-        } catch {
-          // noop
-        }
-      }}
+      onSubmit={handleSubmit}
     >
       <input
         className="mb-2 rounded bg-white/10 p-2 text-white"
@@ -45,9 +49,9 @@ export function CreatePostForm() {
         onChange={(e) => setTitle(e.target.value)}
         placeholder="Title"
       />
-      {error?.data?.zodError?.fieldErrors.title && (
+      {error?.message && (
         <span className="mb-2 text-red-500">
-          {error.data.zodError.fieldErrors.title}
+          {error.message}
         </span>
       )}
       <input
@@ -61,12 +65,13 @@ export function CreatePostForm() {
           {error.data.zodError.fieldErrors.content}
         </span>
       )}
-      {}
+      { }
       <button
         type="submit"
-        className="rounded bg-emerald-400 p-2 font-bold text-zinc-900"
+        className="rounded flex justify-center gap-2 bg-emerald-400 p-2 font-bold text-zinc-900"
       >
-        Create
+        {isPending && <Loader2 className="animate-spin" />} {isPending ? "...Enviando" : "Crear"}
+
       </button>
       {error?.data?.code === "UNAUTHORIZED" && (
         <span className="mt-2 text-red-500">You must be logged in to post</span>
@@ -75,10 +80,30 @@ export function CreatePostForm() {
   );
 }
 
+type PostResponse = {
+  json: {
+    id: string;
+    title: string;
+    content: string;
+    authorId: string;
+    createdAt: Date;
+    author: {
+      id: string;
+      name: string;
+      image: string | null;
+      email: string | null;
+    };
+  }[];
+  meta: { values: { [key: string]: string[] } };
+};
 export function PostList() {
   const [posts] = api.post.all.useSuspenseQuery();
 
-  if (posts.length === 0) {
+  console.log("postlist", posts);
+
+
+  if (posts?.length === 0 || !posts) {
+    console.log("no posts");
     return (
       <div className="relative flex w-full flex-col gap-4">
         <PostCardSkeleton pulse={false} />
@@ -94,7 +119,7 @@ export function PostList() {
 
   return (
     <div className="flex w-full flex-col gap-4">
-      {posts.map((p) => {
+      {Array.isArray(posts) && posts?.map((p) => {
         return <PostCard key={p.id} post={p} />;
       })}
     </div>
@@ -123,13 +148,15 @@ export function PostCard(props: {
       </div>
       <div>
         <button
-          className="cursor-pointer text-sm font-bold uppercase text-emerald-400"
+          className="cursor-pointer  flex justify-center gap-2 text-sm font-bold uppercase text-emerald-400"
           onClick={async () => {
             await deletePost.mutateAsync(props.post.id);
             await utils.post.all.invalidate();
           }}
         >
-          Delete
+
+          {deletePost.isPending && <Loader2 className="animate-spin fade" />} {deletePost.isPending ? "...Eliminando" : "Eliminar"}
+
         </button>
       </div>
     </div>
@@ -142,22 +169,19 @@ export function PostCardSkeleton(props: { pulse?: boolean }) {
   return (
     <div className="flex flex-row rounded-lg bg-white/10 p-4 transition-all hover:scale-[101%]">
       <div
-        className={`mr-2 h-16 w-16 self-center rounded ${
-          pulse && "animate-pulse"
-        }`}
+        className={`mr-2 h-16 w-16 self-center rounded ${pulse && "animate-pulse"
+          }`}
       />
       <div className="flex-grow">
         <h2
-          className={`w-1/4 rounded bg-emerald-400 text-2xl font-bold ${
-            pulse && "animate-pulse"
-          }`}
+          className={`w-1/4 rounded bg-emerald-400 text-2xl font-bold ${pulse && "animate-pulse"
+            }`}
         >
           &nbsp;
         </h2>
         <p
-          className={`mt-2 w-1/3 rounded bg-current text-sm ${
-            pulse && "animate-pulse"
-          }`}
+          className={`mt-2 w-1/3 rounded bg-current text-sm ${pulse && "animate-pulse"
+            }`}
         >
           &nbsp;
         </p>

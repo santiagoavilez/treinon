@@ -133,8 +133,9 @@ function CreatePost() {
 export default function HomeScreen() {
   const utils = api.useUtils();
 
-  const { data: posts } = api.post.all.useQuery();
-
+  const postquery = api.post.all.useQuery();
+  const posts = postquery.data ?? [];
+  console.log(posts);
   return (
     <SafeAreaView className="bg-zinc-900">
       <Stack.Screen

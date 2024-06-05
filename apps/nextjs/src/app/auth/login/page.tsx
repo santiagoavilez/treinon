@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { Github } from "lucide-react";
+import { Github } from 'lucide-react';
 
 import { signInWithGithub, signInWithPassword, signUp } from "../actions";
 

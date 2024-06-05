@@ -13,9 +13,9 @@
   },
   "dependencies": {
     "@acme/db": "workspace:^0.1.0",
-    "@supabase/supabase-js": "^2.39.0",
-    "@trpc/client": "next",
-    "@trpc/server": "next",
+    "@supabase/supabase-js": "^2.43.4",
+    "@trpc/client": "11.0.0-rc.364",
+    "@trpc/server": "11.0.0-rc.364",
     "nanoid": "^5.0.4",
     "superjson": "2.2.1",
     "zod": "^3.23.8"
