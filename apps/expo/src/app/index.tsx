@@ -143,7 +143,7 @@ export default function HomeScreen() {
           headerLeft: () => <AuthAvatar />,
           headerTitle: () => (
             <Text className="text-3xl font-bold text-zinc-200">
-              <Text className="text-fuchsia-500">T3</Text>
+              <Text className="text-fuchsia-500">Trein</Text>
               <Text> x </Text>
               <Text className="text-emerald-400">Supabase</Text>
             </Text>

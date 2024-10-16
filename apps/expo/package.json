@@ -15,6 +15,7 @@
     "ios": "expo run:ios"
   },
   "dependencies": {
+    "@clerk/clerk-expo": "^1.2.1",
     "@expo/metro-config": "^0.18.4",
     "@shopify/flash-list": "1.6.4",
     "@supabase/auth-helpers-react": "^0.4.2",
@@ -25,6 +26,7 @@
     "@trpc/server": "11.0.0-rc.364",
     "expo": "^51.0.2",
     "expo-apple-authentication": "~6.4.1",
+    "expo-auth-session": "^5.5.2",
     "expo-constants": "~16.0.2",
     "expo-crypto": "^13.0.2",
     "expo-image": "~1.12.10",
@@ -55,8 +57,9 @@
     "@babel/runtime": "^7.23.2",
     "@expo/config-plugins": "^8.0.4",
     "@types/babel__core": "^7.20.4",
-    "@types/react": "^18.3.3",
-    "eslint": "^9.3.0",
+    "@types/react": "18.3.0",
+    "@types/react-dom": "18.3.0",
+    "eslint": "^8.56.0",
     "prettier": "^3.2.5",
     "tailwindcss": "3.4.3",
     "typescript": "^5.4.5"

@@ -1,12 +1,14 @@
 import { Suspense } from "react";
 
 import { api } from "~/trpc/server";
-import { AuthShowcase } from "./_components/auth-showcase";
 import {
   CreatePostForm,
   PostCardSkeleton,
   PostList,
-} from "./_components/posts";
+} from "../_components/posts";
+import { ClerkLoaded, ClerkLoading, SignIn, SignedOut } from "@clerk/nextjs";
+import { currentUser } from "@clerk/nextjs/server";
+import { Loader2 } from "lucide-react";
 
 
 export default async function HomePage() {
@@ -14,17 +16,16 @@ export default async function HomePage() {
   // If you don't want the Suspense loading state, you could pass these
   // posts as props as use as initialData in the query.
   const posts = await api.post.all();
+  // const user = await currentUser();
   console.log("RSC  Posts:", posts);
 
   return (
-    <main className="flex h-screen flex-col items-center bg-zinc-900 text-zinc-200">
+    <main className="flex h-screen flex-col items-center">
       <div className="container mt-12 flex flex-col items-center justify-center gap-4 py-8">
         <h1 className="text-5xl font-extrabold tracking-tight sm:text-[5rem]">
           <span className="text-fuchsia-500">T3</span> Turbo x{" "}
           <span className="text-emerald-400">Supabase</span>
         </h1>
-        <AuthShowcase />
-
         <CreatePostForm />
         <div className="h-[40vh] w-full max-w-2xl overflow-y-scroll">
           <Suspense

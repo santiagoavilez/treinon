@@ -31,6 +31,9 @@ const defineConfig = (): ExpoConfig => ({
     supportsTablet: true,
     usesAppleSignIn: true,
   },
+  extra: {
+    clerkPublishableKey: process.env.CLERK_PUBLISHABLE_KEY,
+  },
   android: {
     package: "your.bundle.identifier",
     adaptiveIcon: {

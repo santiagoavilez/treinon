@@ -7,6 +7,8 @@ import { cache } from "react";
 import { headers } from "next/headers";
 
 import { TRPCReactProvider } from "~/trpc/react";
+import { ClerkProvider } from "@clerk/nextjs";
+import Header from "./_components/navbar/nav";
 
 const fontSans = Inter({
   subsets: ["latin"],
@@ -28,18 +30,26 @@ export const metadata: Metadata = {
     creator: "@jullerino",
   },
 };
-
+import { esES } from "../../../../es-ES";
 // Lazy load headers
 const getHeaders = cache(async () => headers());
 
-export default function Layout(props: { children: React.ReactNode }) {
+export default function Layout(props: { children: React.ReactNode, }) {
   return (
-    <html lang="en">
-      <body className={["font-sans", fontSans.variable].join(" ")}>
-        <TRPCReactProvider headersPromise={getHeaders()}>
-          {props.children}
-        </TRPCReactProvider>
-      </body>
-    </html>
+    <ClerkProvider
+      localization={esES}>
+      <html lang="en">
+        <body className="flex h-screen flex-col items-center bg-zinc-900 text-zinc-200">
+
+          <main className={["font-sans", fontSans.variable].join(" ")}>
+            <TRPCReactProvider headersPromise={getHeaders()}>
+              <Header />
+              {props.children}
+            </TRPCReactProvider>
+
+          </main>
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }
